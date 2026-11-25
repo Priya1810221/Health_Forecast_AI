@@ -1,3 +1,4 @@
+import os 
 from fastapi import FastAPI, Depends  # type: ignore[import]
 from fastapi.middleware.cors import CORSMiddleware
 from app.auth import router as auth_router
@@ -11,9 +12,13 @@ from app.model_management import router as model_router
 
 app = FastAPI(title="HealthForecast AI")
 
+frontend_urls = os.getenv("FRONTEND_URL", "")
+origins = [u.strip().rstrip("/") for u in frontend_urls.split(",") if u.strip()]
+origins += ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
